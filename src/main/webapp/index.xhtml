@@ -5,15 +5,18 @@
       xmlns:p="http://primefaces.org/ui"
       template="/WEB-INF/layouts/main.xhtml">
     <ui:define name="contenido">
-        <p:panelGrid columns="1">
-        <f:facet name="header">
+
+        <p:card>
+        <f:facet name="title">
             <h:outputText value="#{titulo}"/>
         </f:facet>
+            <p:divider/>
         <h:form id="crearForm">
-            <p:commandButton value="#{msg['navbar.texto.crear']}" action="form.xhtml" class="p-my-2"/>
+            <p:commandButton value="#{msg['navbar.texto.crear']}" action="form.xhtml" class="p-my-2" update="tabla"/>
         </h:form>
-            <h:outputText value="#{msg['producto.texto.noexite']}" rendered="#{empty productos}" class="alert alert-danger"/>
-        <p:dataTable value="#{productos}" var="item" rendered="#{not empty productos}">
+            <h:outputText value="#{msg['producto.texto.noexite']}" rendered="#{empty productoController.listado}" class="alert alert-danger"/>
+        <p:dataTable value="#{productoController.listado}" var="item" rendered="#{not empty productoController.listado}"
+                     style="max-width:85%;" id="tabla">
             <p:column headerText="#{msg['producto.id']}">
                 <h:outputText value="#{item.id}"/>
             </p:column>
@@ -36,7 +39,8 @@
             </p:column>
             <p:column headerText="#{msg['producto.boton.editar']}">
                     <h:form id="editarForm">
-                        <p:commandButton value="#{msg['producto.boton.editar']}" action="#{productoController.editar(item.id)}" class="ui-button-success"/>
+                        <p:commandButton value="#{msg['producto.boton.editar']}" action="#{productoController.editar(item.id)}"
+                                         class="ui-button-success" update="tabla"/>
                     </h:form>
             </p:column>
             <p:column headerText="#{msg['producto.boton.editar']}">
@@ -47,10 +51,10 @@
             <p:column headerText="#{msg['producto.boton.eliminar']}">
                 <h:form id="eliminarForm">
                     <p:commandButton value="#{msg['producto.boton.eliminar']}" action="#{productoController.eliminar(item)}" class="ui-button-danger"
-                    onclick="return confirm('Esta seguro que desea eliminar?')"/>
+                    onclick="return confirm('Esta seguro que desea eliminar?')" update="tabla"/>
                 </h:form>
             </p:column>
         </p:dataTable>
-        </p:panelGrid>
+        </p:card>
     </ui:define>
 </ui:composition>

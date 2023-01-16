@@ -3,6 +3,7 @@ package ar.com.jalvarez.webapp.jsf3.controllers;
 import ar.com.jalvarez.webapp.jsf3.models.Categoria;
 import ar.com.jalvarez.webapp.jsf3.models.Producto;
 import ar.com.jalvarez.webapp.jsf3.services.ProductoService;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Model;
 import jakarta.enterprise.inject.Produces;
@@ -25,6 +26,14 @@ public class ProductoController {
     @Inject
     ResourceBundle bundle;
 
+    private List<Producto> listado;
+
+    // lo inicializamos con postconstruct
+    @PostConstruct
+    public void init() {
+        listado = productoService.listar();
+    }
+
     // con produces creamos un objeto que se puede inyectar en otros lugares
     // en este caso se inyecta en la vista
     // y esta guardado en el contenedor de CDI
@@ -34,12 +43,19 @@ public class ProductoController {
 //        return "HW Java Server Faces 3.0";
         return bundle.getString("producto.texto.titulo");
     }
-    @Produces
-    @RequestScoped
-    @Named("productos")
-    public List<Producto> findAll() {
-        return productoService.listar();
-    }
+
+    // lo comentamos dado que no es funcional con AJAX
+    // necesitamos que el SPA sepa que se modifico el modelo para que se actualice la vista
+    // y no que tengamos que actualizar la pagina manualmente
+    // asi que en alternativa vamos a inicializar el componente productocontroller con el listado
+    // (ver arriba)
+
+//    @Produces
+//    @RequestScoped
+//    @Named("productos")
+//    public List<Producto> findAll() {
+//        return productoService.listar();
+//    }
 
     @Produces
     @Model
@@ -67,18 +83,26 @@ public class ProductoController {
             facesContext.addMessage(null, new FacesMessage(String.format(bundle.getString("producto.mensaje.crear"), producto.getNombre())));
         }
         productoService.guardar(producto);
-        return "index.xhtml?faces-redirect=true";
+//        return "index.xhtml?faces-redirect=true";
+        // ahora es una peticion asincrona
+        listado = productoService.listar();
+        return "index.html";
     }
 
 
     public String editar(Long id) {
         this.id = id;
+        listado = productoService.listar();
         return "form.xhtml";
     }
-    public String eliminar(Producto producto) {
+    public void eliminar(Producto producto) {
         productoService.eliminar(producto.getId());
         facesContext.addMessage(null, new FacesMessage(String.format(bundle.getString("producto.mensaje.eliminar"), producto.getNombre())));
-        return "index.xhtml?faces-redirect=true";
+        // actualizamos el listado (compatibilidad con AJAX),
+        // ahora el eliminar se invoca desde el boton de eliminar en la vista, hacemos el cambio tambien en index
+        // cambiamos que se ejecute desde CDI a usar un atributo del controlador
+        listado = productoService.listar();
+//        return "index.xhtml";
     }
 
     public Long getId() {
@@ -87,5 +111,13 @@ public class ProductoController {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Producto> getListado() {
+        return listado;
+    }
+
+    public void setListado(List<Producto> listado) {
+        this.listado = listado;
     }
 }
