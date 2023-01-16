@@ -8,7 +8,7 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 @RequestScoped
-public class ProductoRepositoryImpl implements CrudRepository<Producto> {
+public class ProductoRepositoryImpl implements ProductoRepository{
     @Inject
     private EntityManager em;
     @Override
@@ -35,5 +35,13 @@ public class ProductoRepositoryImpl implements CrudRepository<Producto> {
     @Override
     public void eliminar(Long id) {
         em.remove(porId(id));
+    }
+
+    @Override
+    public List<Producto> buscarPorNombre(String nombre) {
+        return em.createQuery("SELECT p FROM Producto p LEFT OUTER JOIN FETCH p.categoria " +
+                        "WHERE p.nombre LIKE :nombre", Producto.class)
+                .setParameter("nombre", "%" + nombre + "%")
+                .getResultList();
     }
 }

@@ -12,11 +12,29 @@
         </f:facet>
             <p:divider/>
         <h:form id="crearForm">
-            <p:commandButton value="#{msg['navbar.texto.crear']}" action="form.xhtml" class="p-my-2" update="tabla"/>
+            <p:commandButton value="#{msg['navbar.texto.crear']}" action="form.xhtml"  update="tabla"/>
         </h:form>
             <h:outputText value="#{msg['producto.texto.noexite']}" rendered="#{empty productoController.listado}" class="alert alert-danger"/>
-        <p:dataTable value="#{productoController.listado}" var="item" rendered="#{not empty productoController.listado}"
-                     style="max-width:85%;" id="tabla">
+            <h:form>
+                <div class="field grid my-2">
+                    <label for="textoBuscar" class="p-col-fixed" style="width: 100px">Buscar</label>
+                    <div class="col">
+                        <p:inputText id="textoBuscar" value="#{productoController.textoBuscar}" placeholder="Buscar">
+                            <p:ajax listener="#{productoController.buscar}" event="keyup" update="mostrar tabla"/>
+                        </p:inputText>
+                    </div>
+                    <div class="col"><h:outputText value="#{productoController.textoBuscar}" id="mostrar"/></div>
+                </div>
+            </h:form>
+
+            <p:dataTable value="#{productoController.listado}" var="item" rendered="#{not empty productoController.listado}"
+                     style="max-width:85%;" id="tabla"
+                         rows="5"
+                         paginator="true" paginatorPosition="both"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
             <p:column headerText="#{msg['producto.id']}">
                 <h:outputText value="#{item.id}"/>
             </p:column>

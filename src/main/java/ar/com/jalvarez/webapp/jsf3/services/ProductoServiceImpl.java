@@ -3,6 +3,7 @@ package ar.com.jalvarez.webapp.jsf3.services;
 import ar.com.jalvarez.webapp.jsf3.models.Categoria;
 import ar.com.jalvarez.webapp.jsf3.models.Producto;
 import ar.com.jalvarez.webapp.jsf3.repositories.CrudRepository;
+import ar.com.jalvarez.webapp.jsf3.repositories.ProductoRepository;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Stateless
 public class ProductoServiceImpl implements ProductoService {
     @Inject
-    private CrudRepository<Producto> productoRepository;
+    private ProductoRepository productoRepository;
 
     @Inject
     private CrudRepository<Categoria> categoriaRepository;
@@ -43,5 +44,10 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public Optional<Categoria> porIdCategoria(Long id) {
         return Optional.ofNullable(categoriaRepository.porId(id));
+    }
+
+    @Override
+    public List<Producto> buscarPorNombre(String nombre) {
+        return productoRepository.buscarPorNombre(nombre);
     }
 }

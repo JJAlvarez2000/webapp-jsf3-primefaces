@@ -25,7 +25,7 @@ public class ProductoController {
     FacesContext facesContext;
     @Inject
     ResourceBundle bundle;
-
+    private String textoBuscar;
     private List<Producto> listado;
 
     // lo inicializamos con postconstruct
@@ -104,6 +104,9 @@ public class ProductoController {
         listado = productoService.listar();
 //        return "index.xhtml";
     }
+    public void buscar() {
+        this.listado = productoService.buscarPorNombre(this.textoBuscar);
+    }
 
     public Long getId() {
         return id;
@@ -119,5 +122,13 @@ public class ProductoController {
 
     public void setListado(List<Producto> listado) {
         this.listado = listado;
+    }
+
+    public String getTextoBuscar() {
+        return textoBuscar;
+    }
+
+    public void setTextoBuscar(String textoBuscar) {
+        this.textoBuscar = textoBuscar;
     }
 }
